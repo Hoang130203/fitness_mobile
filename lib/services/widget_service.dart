@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:home_widget/home_widget.dart';
 
 import '../app/providers.dart';
-import '../data/models.dart';
 import '../data/repository.dart';
 
 /// Pushes the daily summary into platform home-screen widgets.
@@ -28,7 +27,7 @@ class WidgetService {
         goal: repo.goal,
         settings: repo.settings,
       );
-      final data = <String, Object>{
+      final data = <String, String>{
         'caloriesLeft': s.remaining.round().toString(),
         'caloriesEaten': s.eaten.round().toString(),
         'caloriesBudget': s.budget.round().toString(),

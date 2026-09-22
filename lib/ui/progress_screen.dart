@@ -88,8 +88,12 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
               14 /
               7
         : -1.0;
-    final plateau =
-        goal != null && isPlateau(trendChange14d: trend14, goal: goal.goalType);
+    final spanDays = w14.length >= 2
+        ? w14.last.timestamp.difference(w14.first.timestamp).inDays
+        : 0;
+    final plateau = goal != null &&
+        spanDays >= 10 &&
+        isPlateau(trendChange14d: trend14, goal: goal.goalType);
 
     final kgPerWeek = w14.length >= 2
         ? weeklyChangeKg(

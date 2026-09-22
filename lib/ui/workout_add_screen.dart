@@ -166,6 +166,11 @@ class _WorkoutFormState extends ConsumerState<WorkoutFormScreen> {
     }
   }
 
+  bool get _showsIntensity =>
+      widget.kind == WorkoutKind.gym ||
+      widget.kind == WorkoutKind.strength ||
+      widget.kind == WorkoutKind.other;
+
   bool get _distanceKind =>
       widget.kind == WorkoutKind.run ||
       widget.kind == WorkoutKind.walk ||
@@ -269,7 +274,7 @@ class _WorkoutFormState extends ConsumerState<WorkoutFormScreen> {
       date: dayKey(DateTime.now()),
       durationSeconds: _durationSec,
       distanceKm: double.tryParse(_distance.text),
-      intensity: _detailed ? null : _intensity,
+      intensity: _showsIntensity && !_detailed ? _intensity : null,
       estimatedCalories: _estimate,
       sets: sets,
     );
@@ -377,10 +382,7 @@ class _WorkoutFormState extends ConsumerState<WorkoutFormScreen> {
               ],
             ),
             const SizedBox(height: 14),
-            if (widget.kind == WorkoutKind.gym ||
-                widget.kind == WorkoutKind.strength ||
-                widget.kind == WorkoutKind.other)
-              _intensityRow(),
+            if (_showsIntensity) _intensityRow(),
             if (widget.kind == WorkoutKind.strength || widget.preset != null)
               _detailedToggle(),
             if (_detailed) _setsEditor(),

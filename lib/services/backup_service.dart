@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
@@ -8,12 +9,18 @@ import 'package:share_plus/share_plus.dart';
 
 import '../app/providers.dart';
 import '../data/models.dart';
+import 'web_download_stub.dart' if (dart.library.html) 'web_download.dart';
 
 /// Local-only backup/export — no network involved.
 class BackupService {
   static Future<void> exportBackup(BuildContext context, WidgetRef ref) async {
     final repo = ref.read(repositoryProvider);
     final json = repo.exportJsonString();
+    if (kIsWeb) {
+      downloadTextFile('fitlog-backup-${dayKey(DateTime.now())}.json', json,
+          'application/json');
+      return;
+    }
     try {
       final dir = await getApplicationDocumentsDirectory();
       final file = File(
@@ -21,10 +28,7 @@ class BackupService {
       );
       await file.writeAsString(json);
       await Share.shareXFiles([XFile(file.path)], subject: 'FitLog backup');
-    } catch (_) {
-      // web: download via share of bytes
-      await Share.share(json, subject: 'fitlog-backup.json');
-    }
+    } catch (_) {}
   }
 
   static Future<void> importBackup(BuildContext context, WidgetRef ref) async {
@@ -97,6 +101,11 @@ class BackupService {
         ].join(','),
       );
     }
+    if (kIsWeb) {
+      downloadTextFile('fitlog-export-${dayKey(DateTime.now())}.csv',
+          sb.toString(), 'text/csv');
+      return;
+    }
     try {
       final dir = await getApplicationDocumentsDirectory();
       final file = File(
@@ -104,8 +113,6 @@ class BackupService {
       );
       await file.writeAsString(sb.toString());
       await Share.shareXFiles([XFile(file.path)], subject: 'FitLog CSV');
-    } catch (_) {
-      await Share.share(sb.toString(), subject: 'fitlog-export.csv');
-    }
+    } catch (_) {}
   }
 }

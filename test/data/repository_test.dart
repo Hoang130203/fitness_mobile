@@ -13,7 +13,9 @@ void main() {
   setUp(() async {
     dir = await Directory.systemTemp.createTemp('fitlog_test');
     Hive.init(dir.path);
-    repo = await Repository.open(prefix: 't${DateTime.now().microsecondsSinceEpoch}');
+    repo = await Repository.open(
+      prefix: 't${DateTime.now().microsecondsSinceEpoch}',
+    );
   });
 
   tearDown(() async {
@@ -27,9 +29,21 @@ void main() {
 
   test('logging a meal snapshots macros and survives meal edits', () async {
     final meal = Meal(
-        id: 'm1', name: 'Cơm nhà', items: const [], calories: 620, protein: 32, carbs: 78, fat: 18);
+      id: 'm1',
+      name: 'Cơm nhà',
+      items: const [],
+      calories: 620,
+      protein: 32,
+      carbs: 78,
+      fat: 18,
+    );
     await repo.saveMeal(meal);
-    final log = await repo.logMeal(meal, day: '2026-09-22', mealType: MealType.lunch, multiplier: 0.75);
+    final log = await repo.logMeal(
+      meal,
+      day: '2026-09-22',
+      mealType: MealType.lunch,
+      multiplier: 0.75,
+    );
     expect(log.calories, 465);
     expect(log.protein, 24);
     expect(repo.meal('m1')!.useCount, 1);
@@ -44,16 +58,28 @@ void main() {
     await repo.logFood(f, day: '2026-09-21', mealType: MealType.lunch);
     await repo.logFood(f, day: '2026-09-21', mealType: MealType.dinner);
     final copied = await repo.copyMeals(
-        fromDay: '2026-09-21', toDay: '2026-09-22', types: {MealType.lunch});
+      fromDay: '2026-09-21',
+      toDay: '2026-09-22',
+      types: {MealType.lunch},
+    );
     expect(copied.length, 1);
     expect(repo.foodLogsFor('2026-09-22').single.mealType, MealType.lunch);
   });
 
   test('saving weight updates profile current weight', () async {
-    await repo.saveProfile(UserProfile(
-        name: 'H', sex: Sex.male, birthYear: 2003, heightCm: 170, weightKg: 70.1,
-        activityLevel: ActivityLevel.moderate));
-    await repo.saveWeight(WeightLog(id: 'w1', timestamp: DateTime(2026, 9, 22), weightKg: 69.8));
+    await repo.saveProfile(
+      UserProfile(
+        name: 'H',
+        sex: Sex.male,
+        birthYear: 2003,
+        heightCm: 170,
+        weightKg: 70.1,
+        activityLevel: ActivityLevel.moderate,
+      ),
+    );
+    await repo.saveWeight(
+      WeightLog(id: 'w1', timestamp: DateTime(2026, 9, 22), weightKg: 69.8),
+    );
     expect(repo.profile!.weightKg, 69.8);
     expect(repo.latestWeight!.weightKg, 69.8);
   });

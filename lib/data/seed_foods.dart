@@ -34,17 +34,24 @@ final List<Food> seedFoods = [
   _f('spring_roll', 'Chả giò', 1, 'piece', 110, 4, 9, 7),
 ];
 
-Food _f(String id, String name, double amt, String unit, double kcal, double p,
-        double c, double fat) =>
-    Food(
-      id: 'seed_$id',
-      name: name,
-      servingAmount: amt,
-      servingUnit: unit,
-      calories: kcal,
-      protein: p,
-      carbs: c,
-      fat: fat,
-      isBuiltIn: true,
-      createdAt: DateTime(2024),
-    );
+Food _f(
+  String id,
+  String name,
+  double amt,
+  String unit,
+  double kcal,
+  double p,
+  double c,
+  double fat,
+) => Food(
+  id: 'seed_$id',
+  name: name,
+  servingAmount: amt,
+  servingUnit: unit,
+  calories: kcal,
+  protein: p,
+  carbs: c,
+  fat: fat,
+  isBuiltIn: true,
+  createdAt: DateTime(2024),
+);

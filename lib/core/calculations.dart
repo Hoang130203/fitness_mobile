@@ -62,8 +62,7 @@ double cardioKcal({
   required double met,
   required double weightKg,
   required int durationSeconds,
-}) =>
-    met * weightKg * (durationSeconds / 3600);
+}) => met * weightKg * (durationSeconds / 3600);
 
 /// MET by running speed (Compendium of Physical Activities, approximated).
 double runningMet(double kmh) {
@@ -101,7 +100,10 @@ double runKcal({
   final hours = durationSeconds / 3600;
   final kmh = hours == 0 ? 0.0 : distanceKm / hours;
   return cardioKcal(
-      met: runningMet(kmh), weightKg: weightKg, durationSeconds: durationSeconds);
+    met: runningMet(kmh),
+    weightKg: weightKg,
+    durationSeconds: durationSeconds,
+  );
 }
 
 double walkKcal({
@@ -112,7 +114,10 @@ double walkKcal({
   final hours = durationSeconds / 3600;
   final kmh = hours == 0 ? 0.0 : distanceKm / hours;
   return cardioKcal(
-      met: walkingMet(kmh), weightKg: weightKg, durationSeconds: durationSeconds);
+    met: walkingMet(kmh),
+    weightKg: weightKg,
+    durationSeconds: durationSeconds,
+  );
 }
 
 double cycleKcal({
@@ -123,29 +128,26 @@ double cycleKcal({
   final hours = durationSeconds / 3600;
   final kmh = hours == 0 ? 0.0 : distanceKm / hours;
   return cardioKcal(
-      met: cyclingMet(kmh), weightKg: weightKg, durationSeconds: durationSeconds);
+    met: cyclingMet(kmh),
+    weightKg: weightKg,
+    durationSeconds: durationSeconds,
+  );
 }
 
 /// Fixed-MET activities (duration only).
-const fixedMet = {
-  'gym': 5.0,
-  'jumprope': 11.0,
-  'yoga': 3.0,
-  'other': 4.0,
-};
+const fixedMet = {'gym': 5.0, 'jumprope': 11.0, 'yoga': 3.0, 'other': 4.0};
 
 double intensityMet(Intensity intensity) => switch (intensity) {
-      Intensity.light => 3.5,
-      Intensity.moderate => 5.0,
-      Intensity.hard => 7.0,
-    };
+  Intensity.light => 3.5,
+  Intensity.moderate => 5.0,
+  Intensity.hard => 7.0,
+};
 
 double simpleWorkoutKcal({
   required Intensity intensity,
   required double weightKg,
   required int minutes,
-}) =>
-    intensityMet(intensity) * weightKg * (minutes / 60);
+}) => intensityMet(intensity) * weightKg * (minutes / 60);
 
 class Macros {
   const Macros({
@@ -166,13 +168,12 @@ Macros applyPortion({
   required double carbs,
   required double fat,
   required double multiplier,
-}) =>
-    Macros(
-      calories: calories * multiplier,
-      protein: protein * multiplier,
-      carbs: carbs * multiplier,
-      fat: fat * multiplier,
-    );
+}) => Macros(
+  calories: calories * multiplier,
+  protein: protein * multiplier,
+  carbs: carbs * multiplier,
+  fat: fat * multiplier,
+);
 
 /// Trailing moving average with a window of 7 (averages fewer when not enough).
 List<double> movingAverage(List<double> values, {int window = 7}) {
@@ -202,9 +203,13 @@ double weeklyChangeKg({
 ProgressStatus progressStatus(double kgPerWeek) {
   if (kgPerWeek.abs() <= 0.1) return ProgressStatus.stable;
   if (kgPerWeek < 0) {
-    return kgPerWeek >= -0.75 ? ProgressStatus.losing : ProgressStatus.losingQuickly;
+    return kgPerWeek >= -0.75
+        ? ProgressStatus.losing
+        : ProgressStatus.losingQuickly;
   }
-  return kgPerWeek <= 0.75 ? ProgressStatus.gaining : ProgressStatus.gainingQuickly;
+  return kgPerWeek <= 0.75
+      ? ProgressStatus.gaining
+      : ProgressStatus.gainingQuickly;
 }
 
 bool isPlateau({required double trendChange14d, required GoalType goal}) {
@@ -218,8 +223,7 @@ double recentScore({
   required double frequency,
   required double recency,
   required double sameMealTime,
-}) =>
-    frequency * 0.5 + recency * 0.3 + sameMealTime * 0.2;
+}) => frequency * 0.5 + recency * 0.3 + sameMealTime * 0.2;
 
 MealType mealTypeForHour(int hour) {
   if (hour >= 5 && hour < 10) return MealType.breakfast;

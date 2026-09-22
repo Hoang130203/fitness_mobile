@@ -4,30 +4,47 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('BMR / TDEE', () {
     test('Mifflin-St Jeor male', () {
-      expect(bmr(sex: Sex.male, weightKg: 70, heightCm: 170, age: 23),
-          closeTo(10 * 70 + 6.25 * 170 - 5 * 23 + 5, 0.001));
+      expect(
+        bmr(sex: Sex.male, weightKg: 70, heightCm: 170, age: 23),
+        closeTo(10 * 70 + 6.25 * 170 - 5 * 23 + 5, 0.001),
+      );
     });
     test('Mifflin-St Jeor female', () {
-      expect(bmr(sex: Sex.female, weightKg: 60, heightCm: 165, age: 30),
-          closeTo(10 * 60 + 6.25 * 165 - 5 * 30 - 161, 0.001));
+      expect(
+        bmr(sex: Sex.female, weightKg: 60, heightCm: 165, age: 30),
+        closeTo(10 * 60 + 6.25 * 165 - 5 * 30 - 161, 0.001),
+      );
     });
     test('TDEE applies activity factor', () {
-      expect(tdee(bmrValue: 1600, level: ActivityLevel.moderate),
-          closeTo(1600 * 1.55, 0.001));
+      expect(
+        tdee(bmrValue: 1600, level: ActivityLevel.moderate),
+        closeTo(1600 * 1.55, 0.001),
+      );
     });
   });
 
   group('calorie target', () {
     test('lose 0.5 kg/week subtracts ~550 kcal', () {
-      expect(calorieTarget(tdeeValue: 2200, weeklyChangeKg: -0.5, sex: Sex.male),
-          2200 - 550);
+      expect(
+        calorieTarget(tdeeValue: 2200, weeklyChangeKg: -0.5, sex: Sex.male),
+        2200 - 550,
+      );
     });
     test('safety floor male 1500, female 1200', () {
-      expect(calorieTarget(tdeeValue: 1700, weeklyChangeKg: -0.75, sex: Sex.male), 1500);
-      expect(calorieTarget(tdeeValue: 1400, weeklyChangeKg: -0.75, sex: Sex.female), 1200);
+      expect(
+        calorieTarget(tdeeValue: 1700, weeklyChangeKg: -0.75, sex: Sex.male),
+        1500,
+      );
+      expect(
+        calorieTarget(tdeeValue: 1400, weeklyChangeKg: -0.75, sex: Sex.female),
+        1200,
+      );
     });
     test('maintain returns tdee rounded to 10', () {
-      expect(calorieTarget(tdeeValue: 2204, weeklyChangeKg: 0, sex: Sex.male), 2200);
+      expect(
+        calorieTarget(tdeeValue: 2204, weeklyChangeKg: 0, sex: Sex.male),
+        2200,
+      );
     });
   });
 
@@ -39,21 +56,40 @@ void main() {
 
   group('workout kcal', () {
     test('MET formula', () {
-      expect(cardioKcal(met: 8.3, weightKg: 70, durationSeconds: 1800), closeTo(290.5, 0.01));
+      expect(
+        cardioKcal(met: 8.3, weightKg: 70, durationSeconds: 1800),
+        closeTo(290.5, 0.01),
+      );
     });
     test('running MET picks from pace', () {
       // 5 km in 31:20 -> ~9.6 km/h -> MET ~9.8
-      final kcal = runKcal(distanceKm: 5.0, durationSeconds: 1880, weightKg: 69.8);
+      final kcal = runKcal(
+        distanceKm: 5.0,
+        durationSeconds: 1880,
+        weightKg: 69.8,
+      );
       expect(kcal, inInclusiveRange(330, 420));
     });
     test('simple workout intensity', () {
-      expect(simpleWorkoutKcal(intensity: Intensity.moderate, weightKg: 70, minutes: 45),
-          closeTo(5.0 * 70 * 0.75, 0.01));
+      expect(
+        simpleWorkoutKcal(
+          intensity: Intensity.moderate,
+          weightKg: 70,
+          minutes: 45,
+        ),
+        closeTo(5.0 * 70 * 0.75, 0.01),
+      );
     });
   });
 
   test('portion multiplier scales kcal and macros', () {
-    final m = applyPortion(calories: 620, protein: 32, carbs: 78, fat: 18, multiplier: 0.75);
+    final m = applyPortion(
+      calories: 620,
+      protein: 32,
+      carbs: 78,
+      fat: 18,
+      multiplier: 0.75,
+    );
     expect(m.calories, 465);
     expect(m.protein, 24);
     expect(m.carbs, closeTo(58.5, 0.01));
@@ -77,8 +113,10 @@ void main() {
     test('weekly change from trend endpoints', () {
       final start = DateTime(2026, 9, 1);
       final end = DateTime(2026, 9, 29);
-      expect(weeklyChangeKg(startWeight: 72, endWeight: 70, start: start, end: end),
-          closeTo(-0.5, 0.001));
+      expect(
+        weeklyChangeKg(startWeight: 72, endWeight: 70, start: start, end: end),
+        closeTo(-0.5, 0.001),
+      );
     });
   });
 
@@ -99,9 +137,18 @@ void main() {
   });
 
   test('recent score weights', () {
-    expect(recentScore(frequency: 1, recency: 1, sameMealTime: 1), closeTo(1, 0.001));
-    expect(recentScore(frequency: 1, recency: 0, sameMealTime: 0), closeTo(0.5, 0.001));
-    expect(recentScore(frequency: 0, recency: 0, sameMealTime: 1), closeTo(0.2, 0.001));
+    expect(
+      recentScore(frequency: 1, recency: 1, sameMealTime: 1),
+      closeTo(1, 0.001),
+    );
+    expect(
+      recentScore(frequency: 1, recency: 0, sameMealTime: 0),
+      closeTo(0.5, 0.001),
+    );
+    expect(
+      recentScore(frequency: 0, recency: 0, sameMealTime: 1),
+      closeTo(0.2, 0.001),
+    );
   });
 
   test('mealTypeForHour', () {

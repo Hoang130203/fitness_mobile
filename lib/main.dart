@@ -6,11 +6,17 @@ import 'app/providers.dart';
 import 'app/router.dart';
 import 'app/theme.dart';
 import 'data/repository.dart';
+import 'services/notification_service.dart';
+import 'services/widget_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter('fitlog');
   final repo = await Repository.open();
+  await NotificationService.instance.init();
+  await NotificationService.instance.sync(repo.settings);
+  await WidgetService.sync(repo);
+  repo.addListener(() => WidgetService.sync(repo));
   runApp(
     ProviderScope(
       overrides: [repositoryProvider.overrideWithValue(repo)],
